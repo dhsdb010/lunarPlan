@@ -49,7 +49,11 @@ fly logs -a lunarplan-verifier
 ```bash
 cd web && npm run assets
 ```
-That re-uploads the LM model, DEM tile and WASM after changing them. Then redeploy the site:
+That re-uploads the LM model, DEM tile and WASM after changing them.
+
+The depth model (`onnx-community/depth-anything-v2-small`, Apache-2.0) is mirrored on the same bucket under `hf/`, in the hub's own layout, because transformers.js builds its URLs as `{remoteHost}{model}/resolve/main/{file}`. For example: `hf/onnx-community/depth-anything-v2-small/resolve/main/config.json`. If you bump the model, mirror the new files at those paths. The ONNX runtime wasm (~26 MB) is too big for Workers static assets, so `npm run build` drops `dist/assets/ort-*.wasm` and `src/depthWorker.ts` loads it from jsDelivr instead, pinned to the `onnxruntime-web` version in `package-lock.json`. Bump the two together.
+
+Then redeploy the site:
 ```bash
 cd web && npm run deploy
 ```
