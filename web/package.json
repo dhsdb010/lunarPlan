@@ -1,0 +1,24 @@
+{
+  "name": "lunarplan-web",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build && rm -rf dist/models dist/terrain dist/wasm",
+    "preview": "npm run build && wrangler dev",
+    "deploy": "npm run build && wrangler deploy",
+    "assets": "for f in models/apollo_lm.glb:model/gltf-binary terrain/shackleton_rim_2km.f32:application/octet-stream terrain/shackleton_rim_2km.json:application/json wasm/flight_core.wasm:application/wasm; do wrangler r2 object put lunarplan-assets/${f%%:*} --file public/${f%%:*} --content-type ${f#*:} --cache-control 'public, max-age=86400' --remote; done"
+  },
+  "dependencies": {
+    "@babylonjs/core": "9.30.0",
+    "@babylonjs/loaders": "9.30.0",
+    "@huggingface/transformers": "4.3.1",
+    "spacetimedb": "2.13.0"
+  },
+  "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.65.0",
+    "typescript": "7.0.2",
+    "vite": "8.3.4",
+    "wrangler": "^4.152.0"
+  }
+}

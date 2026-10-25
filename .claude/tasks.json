@@ -1,0 +1,170 @@
+{
+  "tasks": [
+    {
+      "id": "P0-1",
+      "title": "Verify LM numbers against NASA primary sources -> docs/spec [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": []
+    },
+    {
+      "id": "P0-2",
+      "title": "Find NASA LM 3D asset; define views + player role [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": []
+    },
+    {
+      "id": "P0-3",
+      "title": "Council #002: scoring rules (accepted by user 2026-10-24) [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P0-1"
+      ]
+    },
+    {
+      "id": "P0-4",
+      "title": "Phase 0 round 2: LM AOH items (RCS, ACA, LPD step, Low Gate) [R-695 full text split out to P0-7] [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P0-1"
+      ]
+    },
+    {
+      "id": "P1-0",
+      "title": "Engine spike: Babylon vs Three, 2x2 km LOLA tile, sun 10 deg (2 days) [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P0-3"
+      ]
+    },
+    {
+      "id": "P1-1",
+      "title": "Prep NASA LM glTF: rename anchor nodes, origin, scale check, LODs",
+      "owner": "unassigned",
+      "status": "pending",
+      "depends_on": [
+        "P0-2"
+      ]
+    },
+    {
+      "id": "P0-5",
+      "title": "Verify Bingo timing (verified: low-level +96 s, mission report) and LPD step (verified: Luminary099) [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P0-4"
+      ]
+    },
+    {
+      "id": "P1-0b",
+      "title": "Babylon shadow shimmer test at 100 km + Three CSM fairness retry -> shimmer PASS both; council proposed switch [Safari split out to P1-0e] [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P1-0"
+      ]
+    },
+    {
+      "id": "P0-6",
+      "title": "Council: Final Approach start altitude (proposal 500 ft, since real Low Gate is ~150 ft)",
+      "owner": "unassigned",
+      "status": "pending",
+      "depends_on": [
+        "P0-4"
+      ]
+    },
+    {
+      "id": "P1-0c",
+      "title": "Three.js confirmation gate: acne <=0.5%, contact shadows >=70%, CSM at 2/20 km (1 day) -> contact PASS, CSM PASS, acne FAIL in 3 grazing-sun views (aliasing). Awaiting user decision [scout output-check 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P1-0b"
+      ]
+    },
+    {
+      "id": "P1-0d",
+      "title": "Gate P1-0d -> neither engine passes; rule: Babylon stays, escalate LM shadowing, re-run (REPORT \u00a712) [scout pass 2026-10-25]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P1-0d-M0",
+        "P1-0d-H1",
+        "P1-0d-BJS",
+        "P1-0d-THREE"
+      ]
+    },
+    {
+      "id": "P1-0d-M0",
+      "title": "Validate LM-self-acne metric: <=0.5% on offline BVH-shaded no-acne reference, >=90% on positive control -> PASS: ref 0.00-0.02%, control 99-100% (REPORT \u00a710) [scout pass 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": []
+    },
+    {
+      "id": "P1-0d-H1",
+      "title": "Horizon-map prototype (WASM): >=98% pixel agreement vs CPU ray-march at 1/3/5/10 deg, >=95% of >=5 km ridge shadows, cost/memory for 5 m tiles -> PASS: agree >=99.02%, far ridges >=96.04%, WASM bit-identical (REPORT \u00a710) [scout pass 2026-10-24]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": []
+    },
+    {
+      "id": "P1-0d-BJS",
+      "title": "Babylon: adapter + sweep + full grid -> A1 FAIL 48.2%, A2 FAIL 57.5%, C1 FAIL 54.1%, R1 PASS (REPORT \u00a712) [scout pass 2026-10-25]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P1-0d-M0",
+        "P1-0d-H1"
+      ]
+    },
+    {
+      "id": "P1-0d-THREE",
+      "title": "Three: sweep + full grid -> A1 FAIL 3.71%, A2 FAIL 13.75%, C1 PASS 82.5%, R1 PASS (REPORT \u00a712) [scout pass 2026-10-25]",
+      "owner": "lead",
+      "status": "completed",
+      "depends_on": [
+        "P1-0d-M0",
+        "P1-0d-H1"
+      ]
+    },
+    {
+      "id": "P0-7",
+      "title": "Read full R-695 descent guidance text: verify P63 initial velocity (~5,560 ft/s) and nominal High Gate (~7,300 ft)",
+      "owner": "unassigned",
+      "status": "pending",
+      "depends_on": []
+    },
+    {
+      "id": "P1-0e",
+      "title": "Safari WebGPU + mid-range Windows laptop runs of spike/gate (never tested)",
+      "owner": "unassigned",
+      "status": "pending",
+      "depends_on": [
+        "P1-0d"
+      ]
+    },
+    {
+      "id": "P1-0f",
+      "title": "Escalate LM shadowing in BOTH engines (dedicated high-res LM shadow map and/or ray-marched LM self-shadowing), then re-run gate P1-0d unchanged",
+      "owner": "unassigned",
+      "status": "pending",
+      "depends_on": [
+        "P1-0d"
+      ]
+    },
+    {
+      "id": "P0-8",
+      "title": "Council: should ground truth model the 0.53 deg solar disc (penumbra) for A1/C1? Must be pre-registered before new data",
+      "owner": "unassigned",
+      "status": "pending",
+      "depends_on": [
+        "P1-0d"
+      ]
+    }
+  ]
+}

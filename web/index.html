@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>lunarPlan — Apollo LM Landing</title>
+<meta name="description" content="Land the Apollo Lunar Module on the real lunar South Pole. Daily seed, replay-verified leaderboard.">
+<style>
+  :root { --g: #7CFFA0; --dim: #3c6b4c; --bg: rgba(6, 12, 9, .72); --line: rgba(124, 255, 160, .25); --warn: #ffcc44; --bad: #ff6666; --cyan: #55ccff; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #000; color: var(--g); font: 14px/1.35 ui-monospace, Menlo, Consolas, monospace; overflow: hidden; }
+  canvas#c { width: 100%; height: 100%; display: block; outline: none; }
+  #inst { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+  button.on { background: var(--g); color: #021; border-color: var(--g); box-shadow: 0 0 12px rgba(124, 255, 160, .6); }
+  button[data-hold="stop"].on { background: var(--bad); border-color: var(--bad); color: #200; box-shadow: 0 0 14px rgba(255, 102, 102, .7); }
+  #marker { position: fixed; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 2; }
+  #marker .ring { position: absolute; left: -22px; top: -22px; width: 44px; height: 44px; border: 2px solid var(--g); border-radius: 50%; box-shadow: 0 0 10px rgba(124, 255, 160, .6); animation: pulse 1.4s ease-in-out infinite; }
+  #marker .ring::after { content: ''; position: absolute; left: 50%; top: 50%; width: 6px; height: 6px; margin: -3px; border-radius: 50%; background: var(--g); }
+  #marker span { position: absolute; left: 28px; top: -8px; color: var(--g); font-size: 12px; white-space: nowrap; text-shadow: 0 0 4px #000; }
+  #marker .arrow { display: none; position: absolute; left: -14px; top: -10px; width: 0; height: 0; border-left: 28px solid var(--g); border-top: 10px solid transparent; border-bottom: 10px solid transparent; transform: rotate(var(--rot, 0rad)); transform-origin: 14px 10px; filter: drop-shadow(0 0 6px rgba(124, 255, 160, .7)); }
+  #marker.off .ring { display: none; } #marker.off .arrow { display: block; }
+  @keyframes pulse { 50% { transform: scale(1.15); opacity: .7; } }
+  #inputs { position: fixed; left: 50%; bottom: 196px; transform: translateX(-50%); color: var(--dim); font-size: 12px; letter-spacing: .05em; background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 3px 10px; }
+  #inputs.live { color: var(--g); border-color: var(--g); }
+  #toast { position: fixed; left: 50%; top: 40%; transform: translate(-50%, -50%) scale(.96); color: var(--cyan); font-size: 20px; font-weight: 700; opacity: 0; transition: opacity .15s, transform .15s; pointer-events: none; text-shadow: 0 0 10px rgba(85, 204, 255, .6); }
+  #toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  #cockpit { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
+  body.window #cockpit { display: block; }
+  .panel { position: fixed; top: 16px; background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 10px 14px; min-width: 210px; backdrop-filter: blur(3px); }
+  #hudL { left: 16px; } #hudR { right: 16px; }
+  .r { display: flex; justify-content: space-between; gap: 16px; padding: 2px 0; }
+  .r span { color: var(--dim); } .r b { font-weight: 600; }
+  #lights { position: fixed; left: 50%; top: 16px; transform: translateX(-50%); display: flex; gap: 8px; }
+  .lt { border: 1px solid var(--line); padding: 4px 10px; border-radius: 4px; color: #27412f; background: var(--bg); letter-spacing: .05em; font-size: 12px; }
+  #lContact.on { color: #001018; background: var(--cyan); } #lLow.on { color: #201000; background: var(--warn); } #lEngine.on { color: #200; background: var(--bad); }
+  #controls { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); display: grid; grid-template-columns: repeat(3, auto); gap: 6px 18px; align-items: center; }
+  .pad { display: grid; grid-template-columns: repeat(3, 52px); gap: 4px; }
+  .grp { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .cap { color: var(--dim); font-size: 11px; letter-spacing: .06em; }
+  .pad button { font-size: 10px; }
+  #viewBtn { cursor: pointer; color: var(--g); }
+  button { font: inherit; color: var(--g); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 8px 12px; cursor: pointer; touch-action: none; }
+  button:hover { border-color: var(--g); } button.big { font-size: 16px; padding: 12px 22px; }
+  .pad button { padding: 8px 0; }
+  .hint { color: var(--dim); font-size: 12px; text-align: center; grid-column: 1 / -1; }
+  .overlay { position: fixed; inset: 0; display: none; place-items: center; background: rgba(0, 0, 0, .55); }
+  .overlay.show { display: grid; }
+  .card { background: rgba(4, 10, 7, .92); border: 1px solid var(--line); border-radius: 10px; padding: 24px 28px; width: min(560px, calc(100vw - 32px)); max-height: calc(100vh - 32px); overflow: auto; }
+  h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: .08em; } .sub { color: var(--dim); margin: 0 0 16px; }
+  input { font: inherit; background: #000; color: var(--g); border: 1px solid var(--line); border-radius: 4px; padding: 8px 10px; width: 100%; margin: 6px 0 14px; }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; }
+  ol#board { list-style: none; padding: 0; margin: 10px 0 0; }
+  ol#board li { display: grid; grid-template-columns: 28px 1fr 64px 64px 64px; gap: 6px; padding: 4px 0; border-bottom: 1px solid rgba(124, 255, 160, .08); }
+  ol#board li.me { color: #fff; } ol#board li.empty { display: block; color: var(--dim); }
+  .t0 { color: var(--bad); } .t1 { color: #cfe; } .t2 { color: var(--g); font-weight: 700; }
+  .tier { font-size: 42px; font-weight: 800; letter-spacing: .1em; margin: 4px 0; }
+  #rStats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 18px; margin: 14px 0; }
+  #rStats div { display: flex; justify-content: space-between; } #rStats span { color: var(--dim); }
+  #verify { color: var(--cyan); min-height: 1.4em; }
+  details { margin-top: 12px; color: var(--dim); } details p { margin: 6px 0; }
+  #depthPanel { position: fixed; right: 16px; bottom: 170px; display: none; gap: 8px; padding: 8px; background: rgba(0, 10, 6, .72); border: 1px solid #1f4d33; border-radius: 6px; }
+  #depthPanel.show { display: grid; grid-template-columns: 1fr 1fr; }
+  #depthPanel figure { margin: 0; } #depthPanel canvas { width: 190px; height: 190px; display: block; border: 1px solid #1f4d33; image-rendering: auto; }
+  #depthPanel figcaption { font-size: 10px; color: var(--dim); margin-top: 3px; }
+  #depthStatus { grid-column: 1 / 3; font-size: 10px; color: var(--cyan); }
+  #depthBtn { cursor: pointer; color: var(--g); } #depthBtn.on { color: var(--cyan); }
+  @media (max-width: 720px) {
+    #depthPanel { top: auto; bottom: 200px; right: 8px; left: 8px; } #depthPanel canvas { width: 100%; height: auto; aspect-ratio: 1; }
+    .panel { min-width: 0; width: calc(50% - 22px); font-size: 11px; padding: 6px 8px; top: 8px; }
+    #hudL { left: 8px; } #hudR { right: 8px; }
+    .r { gap: 6px; }
+    #lights { top: auto; bottom: 150px; flex-wrap: wrap; justify-content: center; width: calc(100% - 16px); }
+    .lt { font-size: 10px; padding: 3px 6px; }
+    #controls { bottom: 8px; gap: 6px; }
+    .hint { display: none; }
+    #inputs { bottom: 168px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<!-- commander's triangular forward window (view 3): frame + LPD-style elevation scale -->
+<svg id="cockpit" viewBox="0 0 1000 600" preserveAspectRatio="none" aria-hidden="true">
+  <defs><mask id="win"><rect width="1000" height="600" fill="white"/><polygon points="130,60 870,60 740,560 260,560" fill="black"/></mask></defs>
+  <rect width="1000" height="600" fill="#07090a" mask="url(#win)"/>
+  <polygon points="130,60 870,60 740,560 260,560" fill="none" stroke="#2a3530" stroke-width="10"/>
+  <!-- LPD elevation scale (degrees below the horizon), vertical like the real reticle -->
+  <g stroke="#7CFFA0" stroke-opacity=".35" stroke-width="2" font-size="14" fill="#7CFFA0" fill-opacity=".5" font-family="monospace">
+    <line x1="500" y1="90" x2="500" y2="540"/>
+    <line x1="482" y1="170" x2="518" y2="170"/><text x="526" y="175">20</text>
+    <line x1="482" y1="270" x2="518" y2="270"/><text x="526" y="275">30</text>
+    <line x1="482" y1="370" x2="518" y2="370"/><text x="526" y="375">40</text>
+    <line x1="482" y1="470" x2="518" y2="470"/><text x="526" y="475">50</text>
+  </g>
+</svg>
+<canvas id="inst"></canvas>
+<div id="hudL" class="panel"></div>
+<div id="hudR" class="panel"></div>
+<div id="lights"><span id="lContact" class="lt">CONTACT</span><span id="lLow" class="lt">LOW LEVEL</span><span id="lEngine" class="lt">ENGINE OFF</span><button id="viewBtn" class="lt">VIEW <b id="viewName">orbit</b> (V)</button><button id="depthBtn" class="lt">DEPTH (N)</button></div>
+<div id="depthPanel">
+  <figure><canvas id="nadirRaw" width="256" height="256"></canvas><figcaption>NADIR CAM · straight down</figcaption></figure>
+  <figure><canvas id="nadirDepth" width="256" height="256"></canvas><figcaption>DEPTH · Depth Anything V2 (bright = near)</figcaption></figure>
+  <div id="depthStatus"></div>
+</div>
+<div id="marker"><div class="ring"></div><div class="arrow"></div><span id="markerDist"></span></div>
+<div id="inputs">no input</div>
+<div id="toast"></div>
+<div id="controls">
+  <div class="grp"><div class="cap">TRANSLATE · RCS + ROD</div>
+    <div class="pad"><button data-hold="ta" title="Q">BACK Q</button><button data-hold="up" title="W">UP W</button><button data-hold="tf" title="E">FWD E</button><button data-hold="tl" title="A">LEFT A</button><button data-hold="dn" title="S">DOWN S</button><button data-hold="tr" title="D">RIGHT D</button></div></div>
+  <div class="grp"><div class="cap">&nbsp;</div><button data-hold="stop" class="big" title="Space">ENGINE STOP ␣</button></div>
+  <div class="grp"><div class="cap">ROTATE · RHC</div>
+    <div class="pad"><button data-hold="rl" title=",">ROLL ,</button><button data-hold="pu" title="Arrow Up">PITCH ↑</button><button data-hold="rr" title=".">ROLL .</button><button data-hold="yl" title="Arrow Left">YAW ←</button><button data-hold="pd" title="Arrow Down">PITCH ↓</button><button data-hold="yr" title="Arrow Right">YAW →</button></div></div>
+  <div class="hint">SpaceX-sim keys · Translate: W/S up/down (rate of descent ±1 ft/s) · A/D left/right · Q/E back/forward — Rotate: ↑/↓ pitch · ←/→ yaw · , . roll — Space engine stop — Views 1–4 · V</div>
+</div>
+
+<div id="menu" class="overlay show"><div class="card">
+  <h1>LUNARPLAN</h1>
+  <p class="sub">P66 Final Approach · Apollo LM · real LOLA terrain</p>
+  <p id="seed" class="sub"></p>
+  <label>Callsign<input id="name" maxlength="20" placeholder="e.g. EAGLE-1" autocomplete="off"></label>
+  <div class="row"><button id="play" class="big">Fly daily seed</button><button id="practice" class="big">Practice (random)</button></div>
+  <h3 style="margin:18px 0 0">Today's leaderboard</h3>
+  <ol id="board"></ol>
+  <details><summary>How to land</summary>
+    <p>You take over at 500 ft in P66; the computer flies the throttle. Keys follow the SpaceX ISS sim. <b>Rotate</b> (the LM's RHC): ↑/↓ pitch, ←/→ yaw, , . roll. Tilting aims the descent engine, which is how you steer toward the green ring and kill drift. <b>Translate</b>: A/D and Q/E fire the small RCS jets for gentle trims (~0.1 m/s²); W/S is up/down, which on the LM is the rate-of-descent switch, 1 ft/s per tap. The RCS jets are weak on purpose (about 0.4 ft/s gained per second held; watch the cyan arrow on the cross-pointer), so use tilt for big drift changes, like the Apollo crews did.</p>
+    <p><b>N</b> opens the nadir panel: a camera under the LM looking straight down, next to a depth map that Depth Anything V2 (small) estimates from that image in your browser. The first open downloads the model (~25–50 MB).</p>
+    <p>Pass the 10-7-4 envelope (≤10 ft/s sink, ≤4 ft/s drift), tilt ≤6°, slope ≤12°. EAGLE: ≤30 m from the ring, ≤2 ft/s drift, ≤3° tilt, ≤3 ft/s at the contact light, and ENGINE STOP within 1 s of it.</p>
+    <p>Rank: tier, then seconds of hover fuel left. Every score is re-flown by the verifier from your input log.</p>
+  </details>
+</div></div>
+
+<div id="result" class="overlay"><div class="card">
+  <div id="rTier" class="tier"></div>
+  <div id="rWhy" class="sub"></div>
+  <div id="rStats"></div>
+  <div id="verify"></div>
+  <div class="row" style="margin-top:14px"><button id="again" class="big">Back to menu</button></div>
+</div></div>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+# P1-0d full grid — three@0.186.1 WebGPU, selected config bias -0.00002 / normalBias 0.02 / map 4096 (protocol §11)
+# 2026-10-25. Ground truth 578 s. stride 4, 1110x622, offset 100 km. Format per cell: samples:pct (A1/A2 % false darkening, C1/R1 % coverage)
+# criteria @20 km: A1 FAIL (24 measured, 6 failed, worst 3.71 %)  A2 FAIL (16 measured, 16 failed, worst 13.75 %)  C1 PASS (8, worst 82.50 %)  R1 PASS (9, worst 92.14 %)
+# criteria @2 km : C1 PASS (8, worst 82.40 %)  R1 PASS (9, worst 98.69 %)
+# ray = ray-mapping check: % of LM-over-terrain pixels changed when LM hidden / % caster-free pixels unchanged
+# c = A1 control (caster-shadowed terrain caught %), ref = A2 M0 reference (must be ~0)
+1/0 ray 78/100 a1P 0:- cNaN a1C 0:- a2P 0:- refNaN a2C 0:- c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+1/90 ray 80/100 a1P 0:- cNaN a1C 2:0.00 a2P 0:- refNaN a2C 0:- c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+1/200 ray 82/100 a1P 38:0.00 cNaN a1C 17284:0.39 a2P 403:2.48 ref0.00 a2C 291:13.75 c1 0:- r1 176:98.30 | 2k c1 0:- r1 176:99.43
+1/270 ray 72/100 a1P 2:0.00 cNaN a1C 452:0.00 a2P 0:- refNaN a2C 0:- c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+3/0 ray 82/100 a1P 0:- cNaN a1C 0:- a2P 0:- refNaN a2C 0:- c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+3/90 ray 82/100 a1P 122:0.00 cNaN a1C 2350:0.00 a2P 0:- refNaN a2C 0:- c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+3/200 ray 82/100 a1P 4974:0.36 c99 a1C 24978:0.26 a2P 457:1.53 ref0.00 a2C 302:13.25 c1 1630:99.02 r1 159:94.34 | 2k c1 1630:98.77 r1 159:100.00
+3/270 ray 75/100 a1P 89:0.00 cNaN a1C 1663:0.00 a2P 3:0.00 ref0.00 a2C 41:26.83 c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+5/0 ray 82/100 a1P 80:0.00 cNaN a1C 21:0.00 a2P 0:- refNaN a2C 3:100.00 c1 0:- r1 0:- | 2k c1 0:- r1 0:-
+5/90 ray 81/100 a1P 2280:0.44 c100 a1C 14162:1.02 a2P 5499:2.53 ref0.02 a2C 139:5.04 c1 46:100.00 r1 476:96.22 | 2k c1 46:100.00 r1 476:99.37
+5/200 ray 83/100 a1P 20529:0.35 c87 a1C 27716:0.22 a2P 534:2.43 ref0.00 a2C 308:13.31 c1 5658:82.50 r1 160:93.75 | 2k c1 5658:82.40 r1 160:100.00
+5/270 ray 79/100 a1P 12463:1.28 c100 a1C 5339:0.62 a2P 41:0.00 ref0.00 a2C 323:5.57 c1 7647:100.00 r1 153:98.04 | 2k c1 7647:100.00 r1 153:98.69
+10/0 ray 82/100 a1P 14597:0.45 c99 a1C 11435:0.78 a2P 2133:2.86 ref0.00 a2C 148:12.16 c1 213:97.18 r1 318:92.14 | 2k c1 213:95.77 r1 318:100.00
+10/90 ray 80/100 a1P 23114:0.58 c99 a1C 27371:0.46 a2P 5281:2.35 ref0.02 a2C 188:6.38 c1 988:93.02 r1 265:95.09 | 2k c1 988:93.12 r1 265:100.00
+10/200 ray 83/100 a1P 25266:0.41 c92 a1C 29298:0.24 a2P 679:1.03 ref0.00 a2C 334:12.87 c1 3232:84.65 r1 131:93.13 | 2k c1 3232:83.42 r1 131:100.00
+10/270 ray 80/100 a1P 14323:3.71 c100 a1C 23614:0.32 a2P 45:0.00 ref0.00 a2C 398:5.53 c1 11177:99.40 r1 144:95.83 | 2k c1 11177:99.33 r1 144:100.00
+# A2 rock-only false darkening (pad/chase) stays 0-4.3 % except 3/270 chase 14.3 % (35 samples); most A2 failures are LM surfaces in the chase view.

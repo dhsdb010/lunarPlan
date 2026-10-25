@@ -1,0 +1,4 @@
+{"date":"2026-10-24","build":"crates/horizon wasm32-unknown-unknown release (24.8 KB)","browser":"Chromium (Claude browser pane), this Mac",
+ "sun":{"az_deg":200,"el_deg":3,"ux_bits":"beaf1d44","uz_bits":"bf708fb2","tan_el_bits":"3d56a98a"},
+ "runs":[{"roi":"tile2km","samples":160801,"wasmMs":748,"fnv1a":"384f4e95","bitIdenticalToNative":true},{"roi":"center4km","samples":641601,"wasmMs":1804}],
+ "native":{"tile2km_el3_az200_ms":521.8,"fnv1a":"384f4e95"}}

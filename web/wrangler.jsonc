@@ -1,0 +1,8 @@
+{
+  // lunarPlan game site: static assets on Cloudflare (Pages, now part of Workers). Deploy: npx vite build && npx wrangler deploy
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "lunarplan",
+  "compatibility_date": "2026-10-19",
+  "observability": { "enabled": true },
+  "assets": { "directory": "./dist", "not_found_handling": "single-page-application" }
+}

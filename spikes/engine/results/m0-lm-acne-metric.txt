@@ -1,0 +1,32 @@
+# M0 — LM-self-acne metric validation (gate P1-0d), three@0.186.1, terrain receive-only (tcast=0)
+# 2026-10-24. Format per view: samples:pct|c<controlSamples>:<controlCaughtPct>
+# "real" = Three render (untuned, bias -0.00002 / nb 0.02) — PREVIEW ONLY, not the official A2 run.
+# "ref"  = CPU BVH-shaded no-acne reference (2x2 jittered sub-rays). Must be <= 0.5 % (configs >= 100 samples).
+# NaN = no samples in that cell (n/a).
+# Eligible pixels: centre + 4 sub-pixel rays all hit LM, face the sun, terrain-unshadowed, agree on self-shadow.
+
+[grid: tests=acnelm&tcast=0]
+1/0 PAD real 0:NaN|c0:NaN ref 0:NaN|c0:NaN || CHASE real 0:NaN|c0:NaN ref 0:NaN|c0:NaN
+1/90 PAD real 0:NaN|c0:NaN ref 0:NaN|c0:NaN || CHASE real 0:NaN|c0:NaN ref 0:NaN|c0:NaN
+1/200 PAD real 340:3.53|c244:100 ref 451:0.00|c267:100 || CHASE real 35:97.14|c6:100 ref 40:0.00|c23:100
+1/270 PAD real 0:NaN|c0:NaN ref 0:NaN|c0:NaN || CHASE real 0:NaN|c0:NaN ref 0:NaN|c0:NaN
+3/0 PAD real 0:NaN|c0:NaN ref 0:NaN|c0:NaN || CHASE real 0:NaN|c0:NaN ref 0:NaN|c0:NaN
+3/90 PAD real 0:NaN|c0:NaN ref 0:NaN|c0:NaN || CHASE real 0:NaN|c0:NaN ref 0:NaN|c0:NaN
+3/200 PAD real 337:4.45|c242:99 ref 447:0.00|c279:100 || CHASE real 35:97.14|c5:100 ref 40:0.00|c22:100
+3/270 PAD real 3:0.00|c0:NaN ref 3:0.00|c0:NaN || CHASE real 6:100.00|c0:NaN ref 6:0.00|c1:100
+5/0 PAD real 0:NaN|c0:NaN ref 0:NaN|c0:NaN || CHASE real 3:100.00|c4:100 ref 3:0.00|c4:100
+5/90 PAD real 4974:6.31|c1076:100 ref 4992:0.02|c1088:100 || CHASE real 10:90.00|c2:0 ref 10:0.00|c2:100
+5/200 PAD real 353:10.20|c264:99 ref 459:0.00|c310:100 || CHASE real 35:88.57|c4:100 ref 40:0.00|c19:100
+5/270 PAD real 4:0.00|c109:100 ref 4:0.00|c116:100 || CHASE real 12:100.00|c0:NaN ref 12:0.00|c1:100
+10/0 PAD real 2375:8.08|c901:100 ref 2883:0.00|c966:100 || CHASE real 19:94.74|c10:100 ref 21:0.00|c14:100
+10/90 PAD real 4843:5.72|c1187:100 ref 4864:0.02|c1196:100 || CHASE real 13:76.92|c3:33 ref 14:0.00|c3:100
+10/200 PAD real 362:9.12|c276:100 ref 455:0.00|c317:100 || CHASE real 44:93.18|c6:100 ref 49:2.04|c19:100
+10/270 PAD real 5:20.00|c127:100 ref 5:0.00|c130:100 || CHASE real 15:100.00|c0:NaN ref 15:6.67|c2:100
+
+[forced acne: LM shadowSide=FrontSide, bias 0, normalBias 0 — sensitivity check]
+5/90 PAD real 4974:88.46|c1076:100 ref 4992:0.02|c1088:100 || CHASE real 10:90.00|c2:100 ref 10:0.00|c2:100
+5/200 PAD real 353:85.27|c264:100 ref 459:0.00|c310:100 || CHASE real 35:100.00|c4:100 ref 40:0.00|c19:100
+5/270 PAD real 4:100.00|c109:100 ref 4:0.00|c116:100 || CHASE real 12:100.00|c0:NaN ref 12:0.00|c1:100
+10/90 PAD real 4843:86.81|c1187:100 ref 4864:0.02|c1196:100 || CHASE real 13:76.92|c3:100 ref 14:0.00|c3:100
+10/200 PAD real 362:69.89|c276:100 ref 455:0.00|c317:100 || CHASE real 44:100.00|c6:100 ref 49:2.04|c19:100
+10/270 PAD real 5:100.00|c127:100 ref 5:0.00|c130:100 || CHASE real 15:100.00|c0:NaN ref 15:6.67|c2:100

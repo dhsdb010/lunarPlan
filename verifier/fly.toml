@@ -1,0 +1,14 @@
+# lunarPlan verifier: background worker, no public ports. Replays submitted runs and posts verified scores.
+app = "lunarplan-verifier"
+primary_region = "nrt"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  STDB_URI = "wss://maincloud.spacetimedb.com"
+  STDB_DB = "lunarplan-dhsdb010"
+
+[[vm]]
+  size = "shared-cpu-1x"
+  memory = "256mb"

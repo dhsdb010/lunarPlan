@@ -1,0 +1,31 @@
+{
+  "format": "f32le-rowmajor",
+  "samples": 401,
+  "spacing_m": 5.0,
+  "size_m": 2000.0,
+  "datum_m": 596.7800903320312,
+  "relief_m": 168.23583984375,
+  "slope_deg": {
+    "mean": 5.64231869511975,
+    "p95": 10.232700475309473,
+    "max": 32.46663093019824
+  },
+  "source": {
+    "file": "Site04_surf.tif",
+    "window_px": [
+      0,
+      900,
+      401,
+      401
+    ],
+    "polar_stereo_tiepoint": [
+      0.0,
+      0.0,
+      0.0,
+      -9000.0,
+      1000.0,
+      0.0
+    ],
+    "reference": "LOLA 5 m/px South Pole DEM, Barker et al. 2021, PSS 203, 105119"
+  }
+}
