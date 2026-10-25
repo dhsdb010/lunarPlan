@@ -5,6 +5,10 @@ import { pipeline, RawImage, env } from '@huggingface/transformers';
 type Est = (img: RawImage) => Promise<{ depth: RawImage }>;
 const MODEL = 'onnx-community/depth-anything-v2-small';
 env.allowLocalModels = false;
+// model files are mirrored on our R2 bucket (Apache-2.0), so the game doesn't depend on the HF hub at runtime
+if (import.meta.env.VITE_ASSET_BASE) env.remoteHost = `${import.meta.env.VITE_ASSET_BASE}hf/`;
+// the ONNX runtime wasm (~26 MB) is over the Workers asset limit: load it from the CDN
+env.backends.onnx.wasm!.wasmPaths = 'https://cdn.jsdelivr.net/npm/onnxruntime-web@1.31.0-dev.20260914-8d85527a0/dist/';
 let est: Est | null = null;
 
 async function load(): Promise<string> {
