@@ -2,10 +2,16 @@
 
 | Piece | Where | Status |
 |---|---|---|
-| Game (static) | Cloudflare Pages (served on Workers static assets): **https://lunarplan.dhsdb010.workers.dev** | live |
+| Game (static) | Cloudflare Pages (served on Workers static assets): **https://lunarplan.dhsdb010.workers.dev** | offline (paused 2026-10-28) |
 | Game assets (LM glb, DEM tile, WASM) | **R2** bucket `lunarplan-assets`, public at https://pub-19155aba39634845bfc943d38ed09633.r2.dev (CORS GET *) | live |
 | Database / leaderboard | SpacetimeDB Maincloud, database `lunarplan-dhsdb010` (https://spacetimedb.com/lunarplan-dhsdb010) | live |
-| Verifier worker | Fly.io app `lunarplan-verifier` (nrt, shared-cpu-1x, 256 MB, no public ports) | live (card added 2026-10-25). End-to-end check: `cd verifier && npx esbuild test/submit.test.ts --bundle --platform=node --format=esm --outfile=dist/submit.test.mjs && node dist/submit.test.mjs` |
+| Verifier worker | Fly.io app `lunarplan-verifier` (nrt, shared-cpu-1x, 256 MB, no public ports) | stopped (paused 2026-10-28). End-to-end check: `cd verifier && npx esbuild test/submit.test.ts --bundle --platform=node --format=esm --outfile=dist/submit.test.mjs && node dist/submit.test.mjs` |
+
+## Paused (2026-10-28)
+The project is on hold for a redesign. The game site is **offline** (`"workers_dev": false` in `web/wrangler.jsonc`, so the URL returns 404) and the verifier machine is **stopped**. R2 and Maincloud are still up (free tier). Full resume steps are in the root README. To restart the verifier:
+```bash
+fly machine start 28744305c02e08 -a lunarplan-verifier
+```
 
 ## Input log format (v2, 2026-10-25)
 4-byte entries: u16 LE steps-since-last-change, then u16 LE control bits (RHC pitch/roll/yaw, TTCA translation, ROD ±, ENGINE STOP). Runs are submitted as mode `final-approach-v2`. `verifier/test/replay.test.ts` checks that record → replay is bit-identical.

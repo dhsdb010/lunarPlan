@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && rm -rf dist/models dist/terrain dist/wasm",
+    "build": "vite build && rm -rf dist/models dist/terrain dist/wasm dist/assets/ort-*.wasm",
     "preview": "npm run build && wrangler dev",
     "deploy": "npm run build && wrangler deploy",
     "assets": "for f in models/apollo_lm.glb:model/gltf-binary terrain/shackleton_rim_2km.f32:application/octet-stream terrain/shackleton_rim_2km.json:application/json wasm/flight_core.wasm:application/wasm; do wrangler r2 object put lunarplan-assets/${f%%:*} --file public/${f%%:*} --content-type ${f#*:} --cache-control 'public, max-age=86400' --remote; done"
